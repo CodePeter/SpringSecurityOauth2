@@ -1,5 +1,6 @@
 package com.sinan.authserver.config;
 
+import com.sinan.authserver.exception.AuthExceptionEntryPoint;
 import com.sinan.authserver.resolver.CustomeRedirectResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -28,6 +30,9 @@ public class AuthorizationServerConfig  extends AuthorizationServerConfigurerAda
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private WebResponseExceptionTranslator customWebResponseExceptionTranslator;
+
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -35,6 +40,7 @@ public class AuthorizationServerConfig  extends AuthorizationServerConfigurerAda
                 .allowFormAuthenticationForClients()
                 .tokenKeyAccess("permitAll()")
                 .checkTokenAccess("isAuthenticated()");
+        security.authenticationEntryPoint(new AuthExceptionEntryPoint());
     }
 
     @Override
@@ -79,6 +85,7 @@ public class AuthorizationServerConfig  extends AuthorizationServerConfigurerAda
                 .tokenStore(new InMemoryTokenStore());
 //                .tokenStore(jwtTokenStore) //配置令牌存储策略
 //                .accessTokenConverter(jwtAccessTokenConverter);
+        endpoints.exceptionTranslator(customWebResponseExceptionTranslator);
     }
 
 //    @Bean
@@ -92,6 +99,5 @@ public class AuthorizationServerConfig  extends AuthorizationServerConfigurerAda
 //        accessTokenConverter.setSigningKey("test_key");//配置JWT使用的秘钥
 //        return accessTokenConverter;
 //    }
-
 
 }

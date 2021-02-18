@@ -41,4 +41,19 @@ public class AuthController {
         return Result.build(data);
     }
 
+    @GetMapping("/admin")
+    public String helloAdmin(String code) {
+        return code;
+    }
+
+    @GetMapping("/user")
+    public String helloUser(String code) {
+        return code;
+    }
+
+    @GetMapping("/account")
+    public Principal account(Principal principal) {
+        return principal;
+    }
+
 }
